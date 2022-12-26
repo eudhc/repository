@@ -6,7 +6,7 @@
 
 ## <a id="_Toc122817972"></a>1\.1 Ubantu
 
-在VMware Workstation中安装Ubuntu 18\.04LTS虚拟机，并进行基本的配置。
+在VMware中安装Ubuntu 18\.04LTS虚拟机，并进行配置。
 
 ##  <a id="_Toc122817973"></a>1\.2 Git
 
@@ -20,51 +20,51 @@
 
 1．安装 qemu
 
-sudo apt\-get install qemu
+    sudo apt\-get install qemu
 
-2．从 Git 公共库获取最新 Pintos
+2．从 Git 库获取最新 Pintos
 
-git clone git://pintos\-os\.org/pintos\-anon
+    git clone git://pintos\-os\.org/pintos\-anon
 
-3．进入pintos/src/utils/pintos\-gdb 用 VIM 打开，编辑 GDBMACROS 变量，将Pintos  完整路径赋给该变量。
+3．进入pintos/src/utils/pintos\-gdb 用 gedit 打开，编辑 GDBMACROS 变量，将Pintos项目完整路径赋给该变量。
 
-4．VIM 打开 Makefile 并将 LOADLIBES 变量名编辑为 LDLIBS
+4．gedit 打开 Makefile 文件然后把 LOADLIBES 变量名编辑为 LDLIBS
 
-5．在/src/utils 中输入 make 来编译 utils
+5．在/src/utils 中输入 make 编译
 
-6．编辑/src/threads/Make\.vars（第 7 行）：更改 bochs 为 qemu
+6．编辑/src/threads/Make\.vars：把 bochs 改为 qemu
 
-7．在/src/threads 并运行来编译线程目录 make
+7．在/src/threads 运行 make
 
-8．编辑/utils/pintos（第 103 行）：替换 bochs 为 qemu
+8．在/utils/pintos：把 bochs 改为 qemu
 
-编辑/utils/pintos（257 行）：替换 kernel\.bin 为完整路径的 kernel\.bin
+在/utils/pintos：把 kernel\.bin 改成完整路径
 
-编辑/utils/pintos（621 行）：替换 qemu 为 qemu\-system\-x86\_64
+在/utils/pintos：把 qemu 改为 qemu\-system\-x86_64
 
-9\. 编辑/utils/Pintos\.pm（362 行）：替换 loader\.bin 为完整路径的 loader\.bin
+9．gedit /utils/Pintos.pm：把 loader\.bin 改成完整路径
 
-10\.~/\.bashrc 并添加 export PATH=/home/…/pintos/src/utils:$PATH 到最后一行。
+10\.~/\.bashrc 最后面把上面PATH注释，添加 export PATH=自己路径:$PATH 。
 
-11．重新打开终端输入 source ~/\.bashrc 并运行
+11．打开终端输入 source ~/.bashrc 
 
-12．在 Pintos 下打开终端输入 pintos run alarm\-multiple
+12．在 Pintos 输入 pintos run alarm-multiple
 
 # <a id="_Toc122817975"></a>2\.源码分析
 
 ## <a id="_Toc122817976"></a>2\.1 背景知识
 
-第一步是阅读和理解初始线程系统的代码。Pintos已经实现了线程创建和线程结束、一个在线程之间切换的简单调度程序、以及同步原语（信号量、锁、条件变量和优化屏障）。
+第一步是阅读和理解初始线程系统的代码。Pintos已经实现了线程创建和线程结束、简单在线程之间切换的调度程序、和同步原语。
 
-当线程创建后，您需要创建一个新的上下文用于调度。您提供一个将在此上下文中运行的函数，作为thread\_create\(\)的参数。线程第一次被调度并运行时，它从该函数的开头开始并在该上下文中执行。当函数返回时，线程终止。因此，每个线程的行为就像在Pintos中运行的小程序一样，传递给thread\_create\(\)的函数的行为就像main\(\)一样。
+当线程创建后，需要创建一个新的上下文用于调度。提供一个将在此上下文中运行的函数，作为thread\_create\(\)的参数。当线程第一次被调度运行时，它从函数的开头开始并且在该上下文中执行。当函数返回时，线程就终止。
 
-在任意一个给定的时刻，只有一个线程在运行，其余线程（如果有的话）变为非活动状态。调度程序决定下一步运行哪个线程。（如果在某个给定时刻没有线程是就绪的，则运行在idle\(\)中实现的特殊“idle”线程。）当一个线程需要等待另一个线程执行某个操作时，同步原语可以强制上下文切换\.
+在任意一个时刻，只有一个线程在运行，其余线程变为非活动状态。调度程序决定下一步运行哪个线程。当一个线程需要等待另一个线程执行某个操作时，同步原语可以强制上下文切换。
 
 上下文切换的机制位于“threads/switch\.S”中，这是80x86的汇编代码。它可以保存当前正在运行的线程的状态并恢复我们要切换的线程的状态。
 
 ## <a id="_Toc122817977"></a>2\.2 源文件
 
-（1）文件夹功能说明
+（1）文件夹的功能说明
 
 文件夹     | 功能
 -------- | -----
@@ -72,7 +72,7 @@ threads  | 基本内核的代码
 devices  | IO 设备接口，定时器、键盘、磁盘等代码
 lib  | 实现了 C 标准库，该目录代码会与 Pintos kernel 一起编译，用户的程序也要在此目 录下运行。内核程序和用户程序都可以使用 \#include 的方式来引入这个目录下的头 文件
 
-（2）threads/ 文件夹中文件说明
+（2）threads/ 文件夹的文件说明
 文件     | 功能
 -------- | -----
 loader\.h  | 内核加载器
@@ -86,7 +86,7 @@ switch\.h  | 汇编语言实现常规的用于交换的线程
 switch\.S  | 
 start\.S  | 跳转到主函数
 
-（3）devices/ 文件夹中文件说明
+（3）devices/ 文件夹的文件说明
 
 文件  | 功能
 -------- | -----
@@ -107,7 +107,7 @@ intq\.c  |
 
 ## <a id="_Toc122817978"></a>2\.3 项目分析
 
-1.进程管理这一项目的入手点是timer_sleep()函数，以下展示该函数的整体结构：
+1.首先进程管理这一项目是从timer_sleep()函数着手，以下是该函数的结构：
 
     /\* Sleeps for approximately TICKS timer ticks\.  Interrupts must
 
@@ -127,11 +127,11 @@ intq\.c  |
 
     \}
 
-在第5行中，首先获得了线程休眠的开始时间，timer\_ticks\(\)函数在获取时间的过程中采用了关中断保存程序状态字，而后开中断恢复程序状态字的办法以防止在执行过程中发生中断，由于后续程序也用到了开关中断的操作，因此将在接下来进行介绍。
+第5行首先获得了线程休眠的开始时间，timer\_ticks\(\)函数在获取时间的过程中采用了关中断保存程序状态字，然后开中断恢复程序状态字从而防止在执行过程中发生中断。
 
-在第7行中，断言了当前中断的状态，确保中断是打开的状态。
+第7行是当前中断的状态，确保中断是打开的。
 
-2.接下来是重点部分，首先看timer_elapsed()函数，其整体结构如下：
+2.timer_elapsed()函数，下面是次结构：
 
     /\* Returns the number of timer ticks elapsed since THEN, which
 
@@ -147,9 +147,9 @@ intq\.c  |
 
     \}
 
-我们可以看到这个函数实际是计算当前线程已经休眠的时间，它将结果返回至timer_sleep()函数后，利用while循环判断休眠时间是否已经达到ticks时间（这里的ticks时间是传入的拟休眠时间的局部变量，而不是全局变量系统启动后到现在的时间），如果没有达到，就将不停的进行thread_yield()。
+可以看到这个函数实际是计算当前线程已经休眠的时间，它把结果返回到timer_sleep()函数，然后while循环判断休眠时间是否达到ticks时间，如果没有就不停的进行thread_yield()。
 
-3\.thread\_yield\(\)函数的整体结构如下所示：
+3.thread_yield()函数：
 
     /\* Yields the CPU\.  The current thread is not put to sleep and
 
@@ -181,27 +181,26 @@ intq\.c  |
 
 （1）页面指针的获取
 
-在第5行，cur指针通过调用thread_current()函数来获取指向页面初始位置的指针，由于该函数也进行了多级嵌套，在此仅简要描述一下函数功能实现的流程。首先，这一函数获取了esp寄存器的值，这一寄存器是指向栈顶的寄存器，为了获取指向页首的指针，我们知道Pintos中一页的大小是2的12次方，因此其做法就是将1这个数字在二进制下左移12位并取反后，再与esp寄存器中的值相与，即可获得页首指针。
+cur指针通过调用thread_current()函数来获取指向页面初始位置的指针，进行了多级嵌套。首先函数获取了esp寄存器的值，esp寄存器是指向栈顶的寄存器，为了获取指向页首的指针，Pintos中一页的大小是2^12，所以1这个数字在二进制下左移12位并取反后，再与esp寄存器中的值相与，就可以获得页首指针。
 
 （2）原子化操作
 
-所谓原子化操作即为开篇所提到的关中断和开中断操作，其分别由以下两个语句实现：
+原子化操作就是关中断和开中断操作，以下两个语句：
 
     old_level = intr_disable();                //关中断
 
-其他操作
 
     intr_set_level(old_level);                 //开中断
 
-其基本实现步骤是利用堆栈的push和pop语句得到程序状态字寄存器的值，并利用CLI指令关中断，恢复时，将值mov进寄存器，并STI开中断。
+基本实现步骤是利用堆栈的push和pop语句可以得到程序状态字寄存器的值，然后利用CLI指令关中断，如果要恢复就把值mov进寄存器然后STI开中断。
 
 （3）线程的切换
 
-这一步骤体现在11-14行代码中，如果当前线程不是空闲线程，则把它加入就绪队列，加入的方式是通过指针的改变使其与前后的线程关联起来，形成一个队列，并将这一线程修改为就绪状态。
+如果当前线程不空闲，就把它加入就绪队列，通过指针的改变使其与前后的线程关联起来，形成队列之后就将这一线程修改为就绪状态。
 
-由此可以得知thread_yield()函数的作用便是将当前线程放入就绪队列，并调度下一线程。而timer_sleep()函数便是在限定的时间内，使运行的程序不停的放入就绪队列，从而达到休眠的目的。
+所以可以知道thread_yield()函数是将当前线程放入就绪队列，然后调度下一线程。而timer_sleep()函数便是在限定的时间内，把运行的程序放入就绪队列，然后达到休眠的目的。
 
-当然这样去做的一大缺点，就是线程不断的在运行和就绪的状态来回切换，极大的消耗资源，由此我们将进行改进。
+由于线程不停的在运行和就绪的状态来回切换，所以会极大的消耗资源。
 
 # <a id="_Toc122817979"></a>3.源码实现
 
@@ -209,7 +208,7 @@ intq\.c  |
 
 ### <a id="_Toc122817981"></a>3.1.1 实现思路
 
-由于原本的timer_sleep()函数采用运行和就绪间切换的方法过于消耗CPU的资源，考虑到Pintos提供了线程阻塞这一模式（见下方线程状态结构体），因此我打算在线程结构体中加入一个用于记录线程睡眠时间的变量，通过利用Pintos的时钟中断（见下方时间中断函数），即每个tick将会执行一次，这样每次检测时将记录线程睡眠时间的变量自减1，当该变量为0时即可代表能够唤醒该线程，从而避免资源的过多开销。
+由于原本的timer_sleep()函数采用运行和就绪间切换的方法会消耗大量CPU的资源，Pintos提供了线程阻塞这一模式，所以在线程结构体中加入一个用于记录线程睡眠时间的变量。通过使用Pintos的时钟中断，使得每个tick将会执行一次。所以此时每次检测时将记录线程睡眠时间的变量自减1。当变量为0时代表能够唤醒该线程，从而减少资源的开销。
 
 线程状态结构体：
 
@@ -245,7 +244,7 @@ intq\.c  |
 
 ### <a id="_Toc122817982"></a>3\.1\.2 实现方法
 
-（1）改写线程结构体，在结构体中增加记录线程睡眠时间的变量ticks\_blocked
+（1）改线程结构体，在其中增加记录线程睡眠时间的变量ticks\_blocked
 
     struct thread
 
@@ -285,15 +284,15 @@ intq\.c  |
 
       \};
 
-（2） 然后在线程被创建的时候初始化ticks\_blocked为0， 加在thread\_create函数内：
+（2） 在线程被创建的时候，在thread\_create函数内初始化ticks\_blocked为0：
 
     t\->ticks\_blocked = 0;
 
-（3） 然后修改时钟中断处理函数， 加入线程sleep时间的检测， 加在            timer\_interrupt内：
+（3） 修改时钟中断处理函数， 在timer\_interrupt中加入线程sleep时间的检测：
 
     thread\_foreach \(blocked\_thread\_check, NULL\);
 
-（4） 这里的thread\_foreach就是对每个线程都执行blocked\_thread\_check这个函数：
+（4） 上面的的thread\_foreach就是对每个线程都执行blocked\_thread\_check函数：
 
     /\* Invoke function 'func' on all threads, passing along 'aux'\.
 
@@ -325,7 +324,7 @@ intq\.c  |
 
 aux就是传给这个函数的参数。
 
-（5） 然后， 给thread添加一个方法blocked\_thread\_check即可：
+（5） 然后， 给thread添加一个方法blocked\_thread\_check：
 
 thread\.h中声明：
 
@@ -383,7 +382,7 @@ thread\_unblock：
 
     \}
 
-至此timer\_sleep\(\)的唤醒机制便编写完成了。
+到这里timer\_sleep\(\)的唤醒机制就ok了。
 
 ### <a id="_Toc122817983"></a>3\.1\.3 实现结果
 
@@ -407,9 +406,9 @@ pass tests/threads/alarm-negative
 
 #### 3\.2\.1\.1 实现思路
 
-这里实现优先级调度的核心思想就是： 维持就绪队列为一个优先级队列。换一种说法： 我们在插入线程到就绪队列的时候保证这个队列是一个优先级队列即可。
+实现优先级调度的核心思想是： 维持就绪队列为一个优先级队列，就是在插入线程到就绪队列的时候一定要保证这个队列是一个优先级队列。
 
-我们在下面三种情况会把线程丢进就绪队列中：
+当下面三种情况我们会把线程放入就绪队列中：
 
 1\. thread\_unblock
 
@@ -417,9 +416,9 @@ pass tests/threads/alarm-negative
 
 3\. thread\_yield
 
-那么我们只要在扔的时候维持这个就绪队列是优先级队列即可。
+我们只需要在放入线程的过程中维持这个就绪队列是优先级队列。
 
-由于Pintos预置函数list\_insert\_ordered\(\)的存在，可以直接使用这个函数实现线程插入时按照优先级完成，因此只需要将涉及直接在末尾插入线程的函数中的语句进行替换即可。
+由于Pintos预置函数list\_insert\_ordered\(\)的存在，可以直接使用这个函数实现线程插入时按照优先级完成，使用我们只需要把在末尾插入线程的函数的语句直接进行替换就可以。
 
 list\_insert\_ordered（）：
 
@@ -457,7 +456,7 @@ list\_insert\_ordered（）：
 
 #### 3\.2\.1\.2 实现方法
 
-实现一个优先级比较函数thread\_cmp\_priority\(\):
+优先级比较函数thread\_cmp\_priority\(\):
 
     /\* priority compare function\. \*/
 
@@ -471,7 +470,7 @@ list\_insert\_ordered（）：
 
     \}
 
-调用Pintos预置函数list\_insert\_ordered\(\)替换thread\_unblock\(\)中的list\_push\_back\(\)函数：
+调用Pintos预置函数list\_insert\_ordered\(\)替换list\_push\_back\(\)函数，他是在thread\_unblock\(\)中的：
 
     void
 
@@ -653,7 +652,7 @@ priority\-change（）：
 
     \}
 
-根据Pintos给到的测试用例来看，我们可以知道，当一个线程的优先级被改变，则需要立即考虑所有线程根据优先级的排序，因此需要在设置优先级函数thread\_set\_priority\(\)中加入thread\_yield \(\)函数以确保每次修改线程优先级后立刻对就绪队列的线程进行重新排序。另外，还需要考虑创建线程时的特殊情况，如果创建的线程优先级高于正在运行的线程的优先级，则需要将正在运行的线程加入就绪队列，并且使新建线程准备运行。
+根据Pintos给到的测试用例可知，当一个线程的优先级被改变，就要考虑所有线程根据优先级的排序，所以在设置优先级函数thread\_set\_priority\(\)中加入thread\_yield \(\)函数来保证每次修改线程优先级后立刻对就绪队列的线程进行重新排序。还需要考虑特殊情况，当创建的线程优先级高于正在运行的线程的优先级，就要把正在运行的线程加入就绪队列，然后使新建线程准备运行。
 
 #### 3\.2\.2\.2 实现方法
 
@@ -677,7 +676,7 @@ thread\_set\_priority（）：
 
 ```
 
-然后在thread\_create最后把创建的线程unblock了之后修改成如下代码：
+然后在thread\_create最后把创建的线程unblock了之后把它修改成如下的代码：
 
 ```
 
@@ -777,9 +776,9 @@ tests/threads/priority\_preempt
 
 #### 3\.2\.3\.1 实现思路
 
-priority\-donate\-one测试用例表明，如果一个线程在获取锁时发现另一个比自己优先级更低的线程已经拥有相同的锁，那么这个线程将会捐赠自己的优先级给另一个线程，即提升另一个线程的优先级与自己相同。
+priority\-donate\-one测试用例表明，如果一个线程在获取锁时发现另一个比自己优先级更低的线程已经拥有相同的锁，那么这个线程将会捐赠自己的优先级给另一个线程，就是把另一个线程的优先级变成跟自己一样。
 
-priority\-donate\-multiple与priority\-donate\-multiple2测试用例表明，在恢复线程捐赠后的优先级时，也要考虑其他线程对这个线程的捐赠情况，即需要提供一个数据结果来记录给这个线程捐赠优先级的所有线程。
+priority\-donate\-multiple与priority\-donate\-multiple2测试用例表明，在恢复线程捐赠后的优先级时，也要考虑其他线程对这个线程的捐赠情况。
 
 priority\-donate\-nest测试用例表明，优先级捐赠可以是递归的，因而需要数据结果记录线程正在等待哪个另外线程释放锁。
 
@@ -789,25 +788,11 @@ priority\-sema和priority\-condvar测试用例表明，需要将信号量的等�
 
 priority\-donate\-chain测试用例表明，释放锁后如果线程没有被捐赠，则需要立即恢复原来的优先级。
 
-总结一下所有测试整合的逻辑：
-
-1\. 在一个线程获取一个锁的时候， 如果拥有这个锁的线程优先级比自己低就提高它的优先级，并且如果这个锁还被别的锁锁着， 将会递归地捐赠优先级， 然后在这个线程释放掉这个锁之后恢复未捐赠逻辑下的优先级。
-
-2\. 如果一个线程被多个线程捐赠， 维持当前优先级为捐赠优先级中的最大值（acquire和release之时）。
-
-3\. 在对一个线程进行优先级设置的时候， 如果这个线程处于被捐赠状态， 则对original\_priority进行设置， 然后如果设置的优先级大于当前优先级， 则改变当前优先级， 否则在捐赠状态取消的时候恢复original\_priority。
-
-4\. 在释放锁对一个锁优先级有改变的时候应考虑其余被捐赠优先级和当前优先级。
-
-5\. 将信号量的等待队列实现为优先级队列。
-
-6\. 将condition的waiters队列实现为优先级队列。
-
-7\. 释放锁的时候若优先级改变则可以发生抢占。
+总结一下测试代码整合的逻辑。
 
 #### 3\.2\.3\.2 实现代码
 
-在thread结构体中加入记录基本优先级、记录线程持有锁和记录线程等待锁的数据结构：
+在thread结构体中加入新的成员变量：记录基本优先级、记录线程持有锁、记录线程等待锁的数据结构：
 
 ```
 
@@ -825,7 +810,7 @@ struct thread
 
 ```
 
-将上述数据结构在init\_thread中初始化：
+把上面新加的在init\_thread中初始化：
 
 ```
 
@@ -845,7 +830,7 @@ init\_thread \(struct thread \*t, const char \*name, int priority\)
 
 ```
 
-在lock结构体中加入记录捐赠和记录最大优先级的数据结构：
+在lock结构体中加入新的成员变量：记录捐赠和最大优先级的数据结构：
 
 ```
 
@@ -861,7 +846,7 @@ struct lock
 
 ```
 
-修改synch\.c中的lock\_acquire函数，使其能够以循环的方式实现递归捐赠，并通过修改锁的max\_priority成员，再通过thread\_update\_priority函数更新优先级来实现优先级捐赠：
+修改synch\.c中的lock\_acquire函数，使他能以循环的方式来实现递归捐赠，然后修改锁的max\_priority成员，通过thread\_update\_priority函数来更新优先级从而来实现优先级捐赠：
 
 ```
 
@@ -931,7 +916,7 @@ lock\_acquire \(struct lock \*lock\)
 
 ```
 
-实现thread\_donate\_priority和lock\_cmp\_priority，以达到对线程优先级的更新和在队列中位置的重新排布:
+实现thread\_donate\_priority和lock\_cmp\_priority，完成线程优先级的更新以及在队列中位置的重新排布:
 
 ```
 
@@ -969,7 +954,7 @@ bool lock\_cmp\_priority \(const struct list\_elem \*a, const struct list\_elem 
 
 ```
 
-实现thread\_hold\_the\_lock和lock\_cmp\_priority，以达到对线程拥有锁的记录，同时根据锁记录的线程最大优先级更新当前线程的优先级并重新调度：
+thread\_hold\_the\_lock和lock\_cmp\_priority，实现对线程拥有锁的记录，同时能够根据锁记录线程的最大优先级来更新当前线程的优先级，从而重新进行调度：
 
 ```
 
@@ -1005,7 +990,7 @@ bool lock\_cmp\_priority \(const struct list\_elem \*a, const struct list\_elem 
 
 ```
 
-修改lock\_release函数，改变锁的释放行为，并实现thread\_remove\_lock：
+修改lock\_release函数，改变锁的释放行为，实现thread\_remove\_lock：
 
 ```
 
@@ -1047,7 +1032,7 @@ void thread\_remove\_lock \(struct lock \*lock\)
 
 ```
 
-实现thread\_update\_priority，该函数实现释放锁时优先级的变化，如果当前线程还有锁，则获取其拥有锁的max\_priority，如果它大于base\_priority则更新被捐赠的优先级：
+实现thread\_update\_priority，完成释放锁时优先级的变化，如果线程还有锁，就获取锁的max\_priority，如果大于base\_priority就要更新被捐赠的优先级：
 
 ```
 
@@ -1119,7 +1104,7 @@ void thread\_set\_priority \(int new\_priority\)
 
 ```
 
-接下来实现sema和condvar这两个优先队列，修改cond\_signal函数，声明并实现比较函数cond\_sema\_cmp\_priority：
+实现sema和condvar优先队列，修改cond\_signal函数，然后声明并实现比较函数cond\_sema\_cmp\_priority：
 
 ```
 
@@ -1232,11 +1217,11 @@ void sema\_down \(struct semaphore \*sema\)
 
 ### <a id="_Toc122817989"></a>3\.3\.1 实现思路
 
-在timer\_interrupt中固定一段时间计算更新线程的优先级，这里是每TIMER\_FREQ时间更新一次系统load\_avg和所有线程的recent\_cpu， 每4个timer\_ticks更新一次线程优先级， 每个timer\_tick running线程的recent\_cpu加一， 虽然这里说的是维持64个优先级队列调度， 其本质还是优先级调度， 我们保留之前写的优先级调度代码即可， 去掉优先级捐赠。
+在timer\_interrupt中固定一段时间计算更新线程的优先级，这是每TIMER\_FREQ时间更新一次系统load\_avg和所有线程的recent\_cpu， 每4个timer\_ticks更新一次线程优先级， 每个timer\_tick running线程的recent\_cpu加一， 这里描述是维持64个优先级队列调度， 但是他还是是优先级调度， 去掉优先级捐赠就可以了。
 
 ### <a id="_Toc122817990"></a>3\.3\.2 实现代码
 
-实现运算逻辑：新建fixed\_point\.h文件，并按照计算公式编写运算程序
+实现运算逻辑：新建fixed\_point\.h文件，然后按照计算公式编写运算程序
 
 ```
 
@@ -1302,7 +1287,7 @@ typedef int fixed\_t;
 
 ```
 
-修改timer\_interrupt函数，实现每4个ticks更新一次， 同时保证recent\_cpu自增1的要求：
+修改timer\_interrupt函数，实现每4个ticks更新一次， 而且要求保证recent\_cpu自增1：
 
 ```
 
@@ -1447,7 +1432,7 @@ mlfqs\_update\_priority\(struct thread \*t\)
 
 ```
 
-在thread结构体中加入成员并在init\_thread中初始化：
+在thread结构体中加入新的成员变量然后在init\_thread中初始化：
 
 ```
 
@@ -1505,11 +1490,12 @@ thread\_start \(void\)
 
 在thread\.h中包含浮点运算头文件：
 
+
+    #include "fixed_point.h"
+
+在thread\.c中修改thread\_set\_nice、thread\_get\_nice、thread\_get\_load\_avg、thread\_get\_recent\_cpu函数：
+
 ```
-
-\#include "fixed\_point\.h"
-
-	在thread\.c中修改thread\_set\_nice、thread\_get\_nice、thread\_get\_load\_avg、thread\_get\_recent\_cpu函数：
 
 /\* Sets the current thread's nice value to NICE\. \*/
 
@@ -1579,16 +1565,18 @@ thread\_get\_recent\_cpu \(void\)
 
 # <a id="_Toc122817992"></a>4\. 实验总结
 
-本次实验主要在ubuntu系统上对Pintos操作系统进行调整测试。我的任务基本都已经实现：
+本次实验主要在ubuntu系统上对Pintos操作系统进行调整测试。我的任务基本都已经实现。
 
-1、实现优先级调度
+通过这次的学习，我更好的了解了进程的基本状态反映了进程执行过程的变化。其中包括就绪状态、执行状态、阻塞状态、终止状态，分别对应了thread状态中的thread\_ready、thread\_running、thread\_block、thread\_dying。贯穿进程调度的整个过程，是进程调度的基础。CPU调度算法\-BSD，较好平衡了现场的不同需求。
 
-当一个线程被添加到具有比当前运行的线程更高优先级的就绪列表时，当前线程应该立即将处理器分给新线程中。类似地，当线程正在等待锁，信号量或条件变量时，应首先唤醒优先级最高的等待线程。线程应可以随时提高或降低自己的优先级，但降低其优先级而不再具有最高优先级时必须放弃CPU。
+1.操作系统在我的理解中就是一个介于硬件和软件中的一个东西，他就相当于一个媒介一样，能够帮助我们更好的通过操作软件来实现硬件的操作。然后进程就是指在跑的程序，它有一定的生命周期。线程是比进程更小的一个基本单位，它相当于就是进程的一个实体，可以独立运行。操作系统的基本功能是可以统一的进行pc上资源的管理，对资源进行了一个抽象，是用户和计算机硬件之间的一个润滑剂、工具。操作系统中最近点的就是中断，中断使用可以更好的满足用户的交互需求。进程有五种状态，就绪、阻塞、创建、终止、执行。要实现进程同步，可以使用共享内存、域套接字等的方法。实现线程同步就需要互斥量、读写锁、自旋锁、条件变量的等方法。同时还有死锁饥饿等问题。
 
-2、实现多级反馈调度
+2.如果要建立一个线程的模型，因为线程是分为用户线程和内核线程的，主要就是根据他所谓的位置进行分类。他所需要的资源虽然大部分共享进程但是还是需要一些寄存器和栈，线程共享的是地址空间，在同一个地址空间中的线程可以构成一个进程。可以让进程来管理线程也可以是操作系统来管理。
 
-实现多级反馈队列调度程序，减少在系统上运行作业的平均响应时间。这里维持了64个队列， 每个队列对应一个优先级， 从PRI\_MIN到PRI\_MAX。通过一些公式计算来计算出线程当前的优先级， 系统调度的时候会从高优先级队列开始选择线程执行， 这里线程的优先级随着操作系统的运转数据而动态改变。
+3.首先要解决一个复杂的工程问题，我们先要对这个项目进行一个整体的分析。然后当然是把大工程拆分成一个一个小的工程，简单的问题，然后从0开始一个问题一个解决。就是先利用所学的基本原理对应一个个小的问题，然后逐步进行解决。当然前提是我们能够对这个复杂项目有一个清晰的认识，只有完全分析清楚了才可以进行拆分，从而进行解决。
 
-通过这次的学习，我更好的了解了进程的基本状态反映了进程执行过程的变化。包括就绪状态、执行状态、阻塞状态、终止状态，分别对应了thread状态中的thread\_ready、thread\_running、thread\_block、thread\_dying。贯穿进程调度的整个过程，是进程调度的基础。CPU调度算法\-BSD，较好平衡了现场的不同需求，其中priority的根据recent\_cpu、nice解决。其中recent\_cpu是线程最近使用的CPU时间的估计值。近期recent\_cpu越大优先级越低。
+4.要有试验方案设计的能力，首先必须要对所学的知识内容有一个深入的了解并且掌握，这才具备了能够进行实验的能力，然后要对你要完成的目标有一个清晰的认识，只有这样，你才能够设计出一个合理合规的实验方案，然后进行试验。
+
+5.随着技术时代的发展，我们的社会和环境面临着很大的威胁，我们工科的学生应该挺身而出为着可持续发展做出我们的贡献。首先我们可以利用编程技术对工业等生产尽心自动化编译，使其生产过程更加合理且节约资源、保护环境，从而实现可持续发展。同时利用我们的所学操作系统知识，可以为工业自动化进行更加合理的设计，使其更加符合绿色环保。能够监控污染废料的处理排放，保护资源，保护社会环境，从而为我们的赖以生存的家园进行可持续化发展的保驾护航。
 
 最后，通过完成本次实验，我收获了很多，了解了很多操作系统的知识，并且通过自己亲手做实验与所学的知识进行了更好的融合。这一段时间的学习使我受益良多。
